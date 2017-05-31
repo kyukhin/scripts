@@ -1,3 +1,34 @@
+(require 'package) ;; You might already have this line
+
+(add-to-list 'package-archives
+	     '("melpa" . "https://melpa.org/packages/"))
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+
+(defun ensure-package-installed (&rest packages)
+    "Assure every package is installed, ask for installation if it’s not.
+     Return a list of installed packages or nil for every skipped package."
+    (mapcar
+     (lambda (package)
+       ;; (package-installed-p 'evil)
+       (if (package-installed-p package)
+	   nil
+	 (if (y-or-n-p (format "Package %s is missing. Install it? " package))
+	     (package-install package)
+	   package)))
+     packages))
+
+;; make sure to have downloaded archive description.
+;; Or use package-archive-contents as suggested by Nicolas Dudebout
+(or (file-exists-p package-user-dir)
+    (package-refresh-contents))
+
+;; activate installed packages
+(package-initialize)
+
+(ensure-package-installed 'buffer-move 'mo-git-blame 'solarized-theme) ;  --> (nil nil) if iedit and magit are already installed
+
 ;; IRC client.
 (setq erc-log-channels-directory "~/.erc/logs/")
 (setq erc-save-buffer-on-part t)
@@ -30,14 +61,6 @@
 ;; '(ecb-windows-width 0.2)
 ;; '(inhibit-startup-screen t))
 
-(require 'package) ;; You might already have this line
-(add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/"))
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-(package-initialize) ;; You might already have this line
-
 (require 'buffer-move)
 
 (load-theme 'solarized-light t)
@@ -63,7 +86,6 @@
 ;;(require 'magit)
 
 ;; mo-git-blame
-(add-to-list 'load-path "~/emacs-els")
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
 (autoload 'mo-git-blame-current "mo-git-blame" nil t)
 
@@ -99,15 +121,6 @@
 
 (setq lua-indent-level 4)
 (add-hook 'lua-mode-hook 'tabs-off)
-
-;; (setq c-continued-statement-offset 4)
-;; (setq c-argdecl-indent             0)
-;; (setq c-brace-offset              -4)
-;; (setq c-continued-brace-offset    -4)
-;; (setq c-brace-imaginary-offset     0)
-;; (setq c-label-offset              -4)
-;; (setq c-auto-newline             nil)
-;; (setq comment-multi-line           t)
 
 (setq make-backup-files nil)
 
