@@ -4,7 +4,9 @@
 	     '("melpa" . "https://melpa.org/packages/"))
 (when (< emacs-major-version 24)
   ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+  (add-to-list 'package-archives
+	       '("gnu" . "http://elpa.gnu.org/packages/")
+	       '("org" . "http://orgmode.org/elpa/")))
 
 (defun ensure-package-installed (&rest packages)
     "Assure every package is installed, ask for installation if it’s not.
@@ -38,14 +40,19 @@
 
 (defun erc-fn (switch)
   (message "IRC mode for emacs.")
-  (setq ercmode 1)
+  (setq ercmode t)
   (setq erc-autojoin-channels-alist
 	'(("freenode.net" "#maria" "#maria-dev")
 	  ("oftc.net" "#gcc")))
   (erc :server "irc.freenode.net" :port 6667 :nick "kyukhin")
-      (erc :server "irc.oftc.net" :port 6667 :nick "kyukhin"))
+  (erc :server "irc.oftc.net" :port 6667 :nick "kyukhin"))
+
+(defun noshell-fn (switch)
+  (message "Shells won't start")
+  (setq ercmode t))  
 
 (add-to-list 'command-switch-alist '("-erc" . erc-fn))
+(add-to-list 'command-switch-alist '("-noshell" . noshell-fn))
 
 ;;(custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -106,11 +113,12 @@
 ;; If file path contains sqlite - use sqlite specific indentation
 ;; use Linux style otherwise
 (defun maybe-sqlite-style ()
-  (if (and buffer-file-name
-	   (string-match "sqlite" buffer-file-name))
-    (progn (setq indent-tabs-mode nil)
-	   (c-basic-offset 2))
-    (c-set-style "Linux")))
+;  (if (and buffer-file-name
+;	   (string-match "sql" buffer-file-name))
+;      (progn (setq indent-tabs-mode nil)
+;	     (c-basic-offset 2))
+  (c-set-style "Linux"))
+;)
 
 ;; (setq-default c-indent-level      8)
 ;; (setq-default c-basic-offset      8)
@@ -284,25 +292,33 @@
 (reverse-input-method "russian-computer")
 
 (defun start-shells-fn ()
+  (if (not ercmode)
+      (progn
+	(split-window-vertically)
+	(select-window (next-window (selected-window)))
 	(shell "*shell*")
 	;; Don't ask about active buffers upon exit.
 	(set-process-query-on-exit-flag (get-process "shell") nil)
 	(rename-buffer "aux2")
 	(shell "*shell*")
 	(set-process-query-on-exit-flag (get-process "shell<1>") nil)
-	(rename-buffer "aux")
+	(rename-buffer "aux")	
+	;;(switch-to-buffer-other-window "aux")
 	(add-hook 'comint-exec-hook
-		(lambda () (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
+		  (lambda () (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
+	)
+    )
 )
 
-(if (not (bound-and-true-p ercmode))
-	(funcall 'start-shells-fn))
-	
+;(if ( not (boundp 'ercmode))
+;    (funcall 'start-shells-fn))
+
+(add-hook 'emacs-startup-hook 'start-shells-fn)
+
 ;;(require 'auto-answer)
 ;;(let ((auto-answer '(("\\`Active processes exist; kill them and exit anyway\\? \\'" t))))
 ;;  (save-buffers-kill-emacs))
 
-(split-window-vertically)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

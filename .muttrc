@@ -1,0 +1,120 @@
+set editor="emacsclient -a \"\" -t"
+
+auto_view text/html
+set mailcap_path = ~/.mutt/mailcap
+
+# Speed up folders switch
+set sleep_time = 0
+
+# Allow Mutt to open new imap connection automatically.
+unset imap_passive
+
+# Set keep alive. Might help not to disconnect to frequently.
+set imap_keepalive=300
+
+# And poll the current mailbox more often (not needed with IDLE in post 1.5.11)
+set timeout=15
+
+# How often to check for new mail (time in seconds).
+set mail_check = 5
+
+# Store message headers locally to speed things up.
+set header_cache=~/.mutt/cache/headers
+
+# Store messages locally to speed things up, like searching message bodies.
+# Can be the same folder as header_cache.
+# This will cost important disk usage according to your e-mail amount.
+set message_cachedir=~/.mutt/cache/bodies
+
+set certificate_file=~/.mutt/certificates
+
+# Sidebar
+# change width accordingly
+set sidebar_width=20
+# Visible at first, then change its value to yes
+set sidebar_visible=yes
+set sidebar_delim='|'
+set sidebar_sort=yes
+
+# <CONTROL>-x
+macro index,pager \CB <sidebar-prev><sidebar-open>
+macro index,pager \CN <sidebar-next><sidebar-open>
+macro index,pager \CK <sidebar-prev-new>
+macro index,pager \CL <sidebar-next-new>
+bind  index,pager \CO sidebar-open
+
+macro index,pager b '<enter-command>toggle sidebar_visible<enter>'
+# endof: Sidebar
+
+# Pager View Options
+set pager_index_lines = 10 # number of index lines to show
+set pager_context = 3      # number of context lines to show
+set pager_stop             # don't go to next message automatically
+set menu_scroll            # scroll in menus
+set tilde                  # show tildes like in vim
+unset markers              # no ugly plus signs
+
+set quote_regexp = "^( {0,4}[>|:#%]| {0,4}[a-z0-9]+[>|]+)+"
+alternative_order text/plain text/enriched text/html
+
+# <ESC>-m: Mark all messages in mailbox as read
+macro index <esc>m "T~N<enter>;WNT~O<enter>;WO\CT~T<enter>" "Mark all messages as read"
+
+bind pager k  previous-line
+bind pager j  next-line
+bind pager gg top
+bind pager G  bottom
+
+bind pager R  group-reply
+
+# View attachments properly.
+bind attach <return> view-mailcap
+# endof: Pager View Options
+
+bind index B bounce-message
+
+# Patch highlight in mail
+color body red         color234 "^-.*"
+color body red         color234 "^-$"
+color body green       color234 "^\\+.*"
+color body green       color234 "^\\+$"
+color body brightwhite color234 "^diff .*"
+color body brightwhite color234 "^--- .*"
+color body brightwhite color234 "^\\+\\+\\+ .*"
+color body magenta     color234 "^@@.*"
+
+# Time of mail sent in index
+set date_format="%d %b %R"
+set index_format="%4C %Z %D %-15.15L (%?l?%4l&%4c?) %s"
+
+# Sort threads by time of *last* received letter
+set sort="threads"
+set strict_threads="yes"
+set sort_browser="reverse-date"
+set sort_aux="last-date-received"
+
+# Address book
+set alias_file=~/.mutt/aliases.txt
+set query_command="abook --mutt-query '%s'"
+source ~/.mutt/aliases.txt
+macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "add the sender address to abook"
+
+# switch account on startup
+source `[ -z $TARANTOOL ] && echo '~/.mutt/gcc.kyukhin' || echo '~/.mutt/tarantool.kyukhin' `
+
+# Do not exit on `q'
+set quit=ask-no
+
+bind pager <up> previous-line
+bind pager <down> next-line
+bind pager [ previous-unread
+bind pager ] next-unread
+
+set pager_stop=yes
+
+set charset         = "utf-8"
+set send_charset    = "utf-8"
+set assumed_charset = "utf-8"
+
+# source ~/.mutt/mutt-colors-solarized-light-256.muttrc
+source ~/.mutt/mutt-colors-solarized-dark-256.muttrc

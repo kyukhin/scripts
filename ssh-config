@@ -1,0 +1,9 @@
+Host sourceware.org sources.redhat.com gcc.gnu.org master.kernel.org svn.eglibc.org kyukhin.noip.me kyukhin.noip.me:2222 192.168.0.1
+  IdentityFile ~/.ssh/gnu
+
+Host github.com
+  IdentityFile ~/.ssh/tarantool.private
+
+Host 192.168.0.251
+  User hscroot
+  IdentityFile ~/.ssh/gnu

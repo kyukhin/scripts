@@ -119,4 +119,9 @@ export PATH=/home/kyukhin/bin:$PATH
 alias emacs='emacs -nw'
 alias grepgo='grep -R --include=*.go'
 alias grepnp='grep -R --exclude-dir="python2.7"'
-export SVN_EDITOR=emacs
+
+if [ -f /usr/bin/time ]; then
+    alias time='/usr/bin/time'
+fi
+
+export SVN_EDITOR="emacs -nw -noshell"
