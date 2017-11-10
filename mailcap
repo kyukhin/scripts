@@ -5,3 +5,4 @@ text/x-c++src; emacsclient %s
 text/*; emacsclient %s
 application/vnd.openxmlformats-officedocument.wordprocessingml.document; docx2txt < %s |e -
 application/pdf;            pdftotext -q -raw %s -; copiousoutput
+application/msword; catdoc < %s |e -
