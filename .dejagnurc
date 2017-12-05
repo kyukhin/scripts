@@ -10,6 +10,6 @@ lappend boards_dir $sde_sim_boadr_dir
 # set sde_dir /nfs/ims/proj/icl/gcc/gnu/users/kyukhin/sde/sde-internal-rs-7.4.0-2014-08-21-lin
 # set sde_dir /nfs/ims/proj/icl/gcc/gnu/users/kyukhin/sde/sde-internal-rs-7.30.0-2015-09-10-lin
 
-set sde_dir /export/kyukhin/gcc/sde/sde
+set sde_dir /export/kyukhin/gcc/sde
 
 set verbose 0

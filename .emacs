@@ -29,7 +29,10 @@
 ;; activate installed packages
 (package-initialize)
 
-(ensure-package-installed 'buffer-move 'mo-git-blame 'solarized-theme) ;  --> (nil nil) if iedit and magit are already installed
+(ensure-package-installed 'buffer-move 'mo-git-blame 'solarized-theme 'blank-mode) ;  --> (nil nil) if iedit and magit are already installed
+
+(autoload 'blank-mode           "blank-mode" "Toggle blank visualization."        t)
+(display-time-mode 1)
 
 ;; IRC client.
 (setq erc-log-channels-directory "~/.erc/logs/")
@@ -89,8 +92,7 @@
 ;(ac-config-default)
 
 ;; Magit
-;; (add-to-list 'load-path "~/.emacs.d/magit-1.2.0")
-;;(require 'magit)
+(require 'magit)
 
 ;; mo-git-blame
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
@@ -167,8 +169,8 @@
 (global-set-key [f8]  'delete-trailing-whitespace)
 (global-set-key [f9]  'comment-region)
 (global-set-key [f10] 'uncomment-region)
-(global-set-key [f11] 'search-word-under-cursor-forward)
-(global-set-key [f12] 'search-word-under-cursor-backward)
+(global-set-key [f11] 'magit-status)
+(global-set-key [f12] 'search-word-under-cursor-forward)
 
 (defun search-word-under-cursor-backward ()
   (interactive)
