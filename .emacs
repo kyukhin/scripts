@@ -29,9 +29,14 @@
 ;; activate installed packages
 (package-initialize)
 
-(ensure-package-installed 'buffer-move 'mo-git-blame 'solarized-theme 'blank-mode) ;  --> (nil nil) if iedit and magit are already installed
+(ensure-package-installed 'buffer-move
+			  'mo-git-blame
+			  'solarized-theme
+			  'blank-mode)
 
-(autoload 'blank-mode           "blank-mode" "Toggle blank visualization."        t)
+(blank-mode 1)
+(blank-display-char-off)
+
 (display-time-mode 1)
 
 ;; IRC client.
