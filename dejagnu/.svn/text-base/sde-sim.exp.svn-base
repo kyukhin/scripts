@@ -1,0 +1,126 @@
+# Load the generic configuration for this board. This will define any
+# routines needed to communicate with the board.
+load_generic_config "sim"
+
+process_multilib_options ""
+
+# Unset the slow_simulator flag; this simulator isn't slow.
+unset_board_info slow_simulator
+
+if ![board_info $board exists sim] {
+    if [info exists SIM] {
+	set_board_info sim $SIM
+    } else {
+        set env(SDE_DIR) $sde_dir
+	set_board_info sim $sde_sim_boadr_dir/sde-sim
+    }
+}
+
+set_board_info is_simulator 1
+
+# The compiler used to build for this board. This has *nothing* to do
+# with what compiler is tested if we're testing gcc.
+set_board_info compiler  "[find_gcc]"
+
+# Test AVX.  Don't add "-dp" since it may confuse assembly scan.
+set_board_info cflags "-mavx -Wa,-msse-check=error"
+#set CFLAGS_FOR_TARGET "-mavx"
+
+#set_board_info ldflags ""
+
+#set_board_info ldscript ""
+
+# Return codes aren't supported by the simulator.
+#set_board_info needs_status_wrapper 1
+
+# Replace sim_load with our own to properly set up arguments and
+# LD_LIBRARY_PATH.
+if { [info procs sim_load] != [list] } {
+    # Remove the old sim_load.
+    rename sim_load ""
+
+    proc sim_load { dest prog args } {
+
+	if { [llength $args] > 0 } {
+	    set parg [lindex $args 0]
+	} else {
+	    set parg ""
+	}
+
+	set inpfile ""
+	if { [llength $args] > 1 } {
+	    if { [lindex $args 1] != "" } {
+		set inpfile "[lindex $args 1]"
+	    }
+	}
+
+	if ![file exists $prog] then {
+	    perror "sde-sim.exp: $prog to be downloaded does not exist."
+	    verbose -log "$prog to be downloaded does not exist." 3
+	    return [list "untested" ""]
+	}
+
+	if [board_info $dest exists sim_time_limit] {
+	    set sim_time_limit [board_info $dest sim_time_limit]
+	} else {
+	    set sim_time_limit 240
+	}
+
+	set output ""
+	set cmd $prog
+
+	global ld_library_path
+	if [info exists ld_library_path] {
+	    set orig_ld_library_path "[getenv LD_LIBRARY_PATH]"
+
+	    setenv LD_LIBRARY_PATH "$ld_library_path:$orig_ld_library_path"
+	    setenv SHLIB_PATH "$ld_library_path:$orig_ld_library_path"
+	    verbose -log "Setting LD_LIBRARY_PATH to $ld_library_path:$orig_ld_library_path" 2
+	}
+
+	# Run the program with a limited amount of real time. While
+	# this isn't as nice as limiting the amount of CPU time, it
+	# will have to do.
+	if { $inpfile != "" } {
+	    set res [remote_spawn target "${cmd} $parg < $inpfile" "readonly"]
+	} else {
+	    set res [remote_spawn target "${cmd} $parg"]
+	}
+
+	if { $res <= 0 } {
+	    return [list "fail" "remote_spawn failed"]
+	}
+
+	set state [remote_wait target $sim_time_limit]
+	set status [lindex $state 0]
+	set output [lindex $state 1]
+	verbose "Output is $output"
+
+	if [info exists ld_library_path] {
+	    setenv LD_LIBRARY_PATH $orig_ld_library_path
+	    setenv SHLIB_PATH $orig_ld_library_path
+	}
+
+	# Remove the carriage returns, because they confuse callers
+	# that try to parse the result.
+	regsub -all "\r" $output "" output
+
+	set status2 [check_for_board_status output]
+	if { $status2 >= 0 } {
+	    set status $status2
+	}
+
+	# FIXME: Do we need to examine $status?
+	# Yes, we do--what if the simulator itself gets an error and
+	# coredumps?
+
+	verbose "Return status was: $status" 2
+	if { $status == 0 } {
+	    set result "pass"
+	} else {
+	    set result "fail"
+	}
+
+	return [list $result $output]
+    }
+}

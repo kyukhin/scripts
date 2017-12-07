@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/ssg/dpd/icl/toolchain/!svn/ver/7935/users/hjl/dejagnu
+END
+.dejagnurc
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/ssg/dpd/icl/toolchain/!svn/ver/7934/users/hjl/dejagnu/.dejagnurc
+END
+sde-sim
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/ssg/dpd/icl/toolchain/!svn/ver/7934/users/hjl/dejagnu/sde-sim
+END
+native-gdbserver.exp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/ssg/dpd/icl/toolchain/!svn/ver/7454/users/hjl/dejagnu/native-gdbserver.exp
+END
+ChangeLog
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ssg/dpd/icl/toolchain/!svn/ver/7935/users/hjl/dejagnu/ChangeLog
+END
+empty.exp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/ssg/dpd/icl/toolchain/!svn/ver/7454/users/hjl/dejagnu/empty.exp
+END
+sde-sim.exp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/ssg/dpd/icl/toolchain/!svn/ver/7934/users/hjl/dejagnu/sde-sim.exp
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/ssg/dpd/icl/toolchain/!svn/ver/3392/users/hjl/dejagnu/Makefile
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/ssg/dpd/icl/toolchain/!svn/ver/7935/users/hjl/dejagnu/README
+END

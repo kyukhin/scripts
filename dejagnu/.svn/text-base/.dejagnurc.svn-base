@@ -1,0 +1,10 @@
+# Make sure we look in the right place for the board description files.
+if ![info exists boards_dir] {
+   set boards_dir {}
+}
+
+
+set sde_emu_boadr_dir /export/gnu/import/svn/dejagnu
+lappend boards_dir $sde_emu_boadr_dir
+
+set sde_dir /export/intel/import/pin/sde-hsw-internal-3.13-2010-03-31-lin-intel64-and-ia32

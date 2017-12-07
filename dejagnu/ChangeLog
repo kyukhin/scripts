@@ -1,0 +1,272 @@
+2011-03-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* README: Updated.
+
+2011-03-22  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc: Updated.
+
+	* emx: Renamed to ...
+	* sde-sim: This.  New.
+
+	* emx-avx-sim.exp: Renamed to ...
+	* sde-sim.exp: This.  New.
+
+2010-04-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for HSW SDE 3.13.
+
+2010-04-11  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* empty.exp: New. 
+	* native-gdbserver.exp: Likewise.
+
+2009-10-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 2.60.
+
+2009-09-16  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 2.58.
+
+2009-07-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (is_remote): Removed.
+
+2009-07-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (is_remote): New.
+
+2009-07-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 2.28.
+
+2009-03-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.78.
+
+2009-02-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.71.
+
+2009-01-08  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.60.
+
+	* emx: Remove "-p -ifeellucky".
+
+2008-11-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx: Add "-p -ifeellucky" for 2.6.27 kernel.
+
+2008-08-21  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp: Use process_multilib_options.
+
+2008-08-08  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.12.
+
+2008-08-01  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.09.
+
+2008-07-30  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx: Remove "-align-correct 0".
+
+2008-07-26  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (check-gcc check-c++ check-fortran): Depend on
+	$(GCC-BUILD-DIR)/gcc/site.exp.
+	($(GCC-BUILD-DIR)/gcc/site.exp): New.
+
+2008-07-26  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.06.
+
+2008-07-16  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.04.
+
+2008-07-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.03.
+
+2008-07-08  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_dir): Updated for EMX 1.02.
+
+2008-07-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx: Replace EMX_DIR with EMX_AVX_DIR.
+
+2008-07-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc (emx_avx_intel64_dir): Removed.
+	(emx_avx_ia32_dir): Likewise.
+	(emx_avx_dir): New for EMX 1.01.
+
+	* emx: Don't set EMX_AVX_DIR.
+
+	* emx-avx-sim.exp (EMX_AVX_INTEL64_DIR): Removed.
+	(EMX_AVX_IA32_DIR): Likewise.
+	(EMX_AVX_DIR): New environment variable for EMX 1.01.
+
+2008-06-10  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (TARGETS): Removed.
+	(clean): Likewise.
+	(c): Replace "Touch $@" with "echo $@ is finished!".
+	(c++): Likewise.
+	(fortran): Likewise.
+	(check-gcc): Likewise.
+	(check-c++): Likewise.
+	(check-fortran): Likewise.
+	(libgcc): Likewise.
+	(libc++): Likewise.
+	(libfortran): Likewise.
+	($(libraries)): Likewise.
+
+2008-06-09  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx: Pass ${1+"$@"} instead of $1 to sde.
+
+	* emx-avx-sim.exp (sim_load): Rewrite to support arguments.
+
+2008-06-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (check-gcc): Add -.
+	(check-c++): Likewise.
+	(check-fortran): Likewise.
+	(libgcc): Likewise.
+	(libc++): Likewise.
+	(libfortran): Likewise.
+	($(libraries)): Likewise.
+
+2008-06-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (CHECKS): New.
+	(COMPILERS): Likewise.
+	(RUNTIMES): Likewise.
+	(TARGETS): Likewise.
+	(clean): Likewise.
+	(c): Touch $@.
+	(c++): Likewise.
+	(fortran): Likewise.
+	(check-gcc): Likewise.
+	(check-c++): Likewise.
+	(check-fortran): Likewise.
+	(libgcc): Likewise.
+	(libc++): Likewise.
+	(libfortran): Likewise.
+	($(libraries)): Likewise.
+	(.PHONY): Removed.
+
+2008-06-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (.PHONY): New.
+
+2008-06-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (check-gcc): Add -k.
+	(check-c++): Likewise.
+	(check-fortran): Likewise.
+	(libgcc): Likewise.
+	(libc++): Likewise.
+	(libfortran): Likewise.
+	($(libraries)): Likewise.
+
+2008-06-06  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (sim_load): Remove the carriage returns.
+
+2008-06-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (sim_load): Remove the old sim_load first.
+
+2008-06-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (TIME): New.
+	(check-gcc): Add $(TIME).
+	(check-c++): Likewise.
+	(check-fortran): Likewise.
+	(libgcc): Likewise.
+	(libc++): Likewise.
+	(libfortran): Likewise.
+	($(libraries)): Likewise.
+
+2008-06-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (cflags): Remove -dp.
+
+2008-06-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (c++): Remove libs.
+	(fortran): Likewise.
+
+	* README: Updated.
+
+2008-06-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (sim_load): Only define it once.
+
+2008-06-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR Infrastructure/826
+	* emx-avx-sim.exp (sim_load): New.
+
+2008-06-03  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile (RUNTESTFLAGS): Add $(TEST).
+
+2008-06-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (cflags): Add -dp.
+
+2008-06-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* Makefile: New.
+
+	* README: Updated from avx-testsuite/emx/README.
+
+2008-06-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (process_multilib_options): Removed.
+
+2008-06-02  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc: Updated to v59.
+
+	* README: Fix a typo.
+
+2008-05-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* emx-avx-sim.exp (cflags): Add -Wa,-msse-check=error.
+
+	* emx: Pass "-align-correct 0" to sde.
+
+2008-04-08  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc: Updated to v44i.
+
+2008-04-01  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc: Updated to v38i.
+
+	* emx: Fix executable name.
+
+2008-03-24  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc: Updated to v37i.
+
+	* emx: Updated for v37i.
+
+	* emx-avx-sim.exp: Try setting CFLAGS_FOR_TARGET.
+
+2008-03-20  H.J. Lu  <hongjiu.lu@intel.com>
+
+	* .dejagnurc: New.
+	* emx: Likewise.
+	* emx-avx-sim.exp: Likewise.
+	* README: Likewise.

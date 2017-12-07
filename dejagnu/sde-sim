@@ -1,0 +1,5 @@
+#! /bin/sh
+
+# $SDE_DIR/sde -p -ifeellucky -skx -- ${1+"$@"}
+$SDE_DIR/sde -p -ifeellucky -- ${1+"$@"}
+#$SDE_DIR/sde -- ${1+"$@"}

@@ -1,0 +1,23 @@
+1. Check out dejagnu.
+2. Copy .dejagnurc to your home directory.
+3. Edit .dejagnurc in your home directory with
+     a. Correct path for SDE directory.
+     b. Correct path for SDE emulator dejagnu directory which contains
+        sde-sim and sde-sim.exp.
+4. To run gcc tests under SDE emulator:
+     a. "make check-gcc".  Run C tests.  There may be extra failures
+        due to "-mavx" passed to gcc.
+     b. "make check-c++".  Run C++ tests.
+     c. "make check-fortran".  Run Fortran tests.
+     d. "make libgcc".  Run C library tests.
+     e. "make libc++".  Run C++ library tests.
+     f. "make libfortran".  Run Fortran library tests.
+     g. "make libgomp".  Run GOMP library tests.
+     h. "make libmudflap".  Run modflap library tests.
+     i. "make libs".  Run GOMP and modflap library tests.
+     j. "make c".  Run C and C/GOMP/modflap library tests.
+     k. "make c++".  Run C++ and C++ library tests.
+     l. "make fortran".  Run Fortran and Fortran library tests.
+     m. "make check".  Run all C, C++ and Fortran tests.
+  You can use "make -jN" to start parallel check.  N can be the number
+  of processors.
