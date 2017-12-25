@@ -114,7 +114,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH=/home/kyukhin/bin:$PATH
+export PATH=/home/kyukhin/bin:/home/kyukhin/bin/bin:$PATH
 
 alias emacs='emacs -nw'
 alias grepgo='grep -R --include=*.go'
