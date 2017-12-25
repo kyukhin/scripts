@@ -32,10 +32,11 @@
 (ensure-package-installed 'buffer-move
 			  'mo-git-blame
 			  'solarized-theme
-			  'blank-mode)
+			  'blank-mode
+			  'magit)
 
-(blank-mode 1)
-(blank-display-char-off)
+;(blank-mode 1)
+;(blank-display-char-off)
 
 (display-time-mode 1)
 
@@ -57,7 +58,7 @@
 
 (defun noshell-fn (switch)
   (message "Shells won't start")
-  (setq ercmode t))  
+  (setq ercmode t))
 
 (add-to-list 'command-switch-alist '("-erc" . erc-fn))
 (add-to-list 'command-switch-alist '("-noshell" . noshell-fn))
@@ -124,7 +125,9 @@
 ;	   (string-match "sql" buffer-file-name))
 ;      (progn (setq indent-tabs-mode nil)
 ;	     (c-basic-offset 2))
-  (c-set-style "Linux"))
+  (c-set-style "Linux")
+  (setq blank-style "color")
+  (blank-mode))
 ;)
 
 ;; (setq-default c-indent-level      8)

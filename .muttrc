@@ -65,7 +65,7 @@ bind pager j  next-line
 bind pager gg top
 bind pager G  bottom
 
-bind pager R  group-reply
+bind pager g  group-reply
 
 # View attachments properly.
 bind attach <return> view-mailcap
