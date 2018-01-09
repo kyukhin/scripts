@@ -136,6 +136,9 @@
 ;; (add-hook 'c-mode-hook 'tabs-on)
 ;; Above lines replaced with Linux style
 (add-hook 'c-mode-hook 'maybe-sqlite-style)
+(add-hook 'c++-mode-hook (setq c-basic-offset 8
+			       tab-width 8
+			       indent-tabs-mode t))
 
 (setq lua-indent-level 4)
 (add-hook 'lua-mode-hook 'tabs-off)
@@ -179,6 +182,11 @@
 (global-set-key [f10] 'uncomment-region)
 (global-set-key [f11] 'magit-status)
 (global-set-key [f12] 'search-word-under-cursor-forward)
+
+(global-set-key (kbd "<S-up>")     'buf-move-up)
+(global-set-key (kbd "<S-down>")   'buf-move-down)
+(global-set-key (kbd "<S-left>")   'buf-move-left)
+(global-set-key (kbd "<S-right>")  'buf-move-right)
 
 (defun search-word-under-cursor-backward ()
   (interactive)
@@ -336,7 +344,8 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default))))
+    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
+ '(grep-command "grep --color -nH -r -e "))
 
 (setq split-height-threshold 1200)
 (setq split-width-threshold 2000)
