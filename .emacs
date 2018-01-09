@@ -183,10 +183,14 @@
 (global-set-key [f11] 'magit-status)
 (global-set-key [f12] 'search-word-under-cursor-forward)
 
+; Swapping buffers
 (global-set-key (kbd "<S-up>")     'buf-move-up)
 (global-set-key (kbd "<S-down>")   'buf-move-down)
 (global-set-key (kbd "<S-left>")   'buf-move-left)
 (global-set-key (kbd "<S-right>")  'buf-move-right)
+
+; Kill whole line w/ Alt+k
+(global-set-key (kbd "M-k")  'kill-whole-line)
 
 (defun search-word-under-cursor-backward ()
   (interactive)
