@@ -1,4 +1,4 @@
-(require 'package) ;; You might already have this line
+(require 'package)
 
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/"))
@@ -33,12 +33,45 @@
 			  'mo-git-blame
 			  'solarized-theme
 			  'blank-mode
-			  'magit)
-
+			  'magit
+			  'irony
+			  'company
+			  'company-irony
+			  'flycheck
+			  'flycheck-irony
+			  'rtags)
 ;(blank-mode 1)
 ;(blank-display-char-off)
 
+; Irony backend for company and flycheck
+; TODO: search DB in current path
+
+; Company mode: autocompletion
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-irony))
+
+(add-hook 'after-init-hook 'global-company-mode)
+
+; Flycheck: on fly syntax checking
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
 (display-time-mode 1)
+
+;; only run this if rtags is installed
+(when (require 'rtags nil :noerror)
+  ;; make sure you have company-mode installed
+  (define-key c-mode-base-map (kbd "M-.")
+    (function rtags-find-symbol))
+  (define-key c-mode-base-map (kbd "M-,")
+    (function rtags-find-references-at-point))
+  (define-key c-mode-base-map (kbd "C->")
+    (function rtags-location-stack-back))
+  ;; install standard rtags keybindings. Do M-. on the symbol below to
+  ;; jump to definition and see the keybindings.
+  (rtags-enable-standard-keybindings))
 
 ;; IRC client.
 (setq erc-log-channels-directory "~/.erc/logs/")
@@ -127,7 +160,9 @@
 ;	     (c-basic-offset 2))
   (c-set-style "Linux")
   (setq blank-style "color")
-  (blank-mode))
+  (blank-mode)
+  (irony-cdb-json-select-most-recent)
+  (irony-mode))
 ;)
 
 ;; (setq-default c-indent-level      8)
@@ -136,9 +171,7 @@
 ;; (add-hook 'c-mode-hook 'tabs-on)
 ;; Above lines replaced with Linux style
 (add-hook 'c-mode-hook 'maybe-sqlite-style)
-(add-hook 'c++-mode-hook (setq c-basic-offset 8
-			       tab-width 8
-			       indent-tabs-mode t))
+(add-hook 'c++-mode-hook 'maybe-sqlite-style)
 
 (setq lua-indent-level 4)
 (add-hook 'lua-mode-hook 'tabs-off)

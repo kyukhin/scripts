@@ -1,4 +1,4 @@
-set editor="emacsclient -a \"\" -t"
+set editor="emacs"
 
 auto_view text/html
 set mailcap_path = ~/.mutt/mailcap
@@ -19,7 +19,7 @@ set timeout=15
 set mail_check = 5
 
 # Store message headers locally to speed things up.
-set header_cache=~/.mutt/cache/headers
+set header_cache=~/.mutt/cache
 
 # Store messages locally to speed things up, like searching message bodies.
 # Can be the same folder as header_cache.
