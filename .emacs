@@ -1,4 +1,10 @@
+;;; config --- kyukhin's Emacs config
+;;; Commentary:
+;;; A custom flag set
+
 (require 'package)
+
+;;; Code:
 
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/"))
@@ -43,10 +49,13 @@
 ;(blank-mode 1)
 ;(blank-display-char-off)
 
+(require 'magit)
+
 ; Irony backend for company and flycheck
 ; TODO: search DB in current path
 
 ; Company mode: autocompletion
+(defvar company-backends)
 (eval-after-load 'company
   '(add-to-list 'company-backends 'company-irony))
 
@@ -61,40 +70,44 @@
 (display-time-mode 1)
 
 ;; only run this if rtags is installed
+(defvar c-mode-base-map)
 (when (require 'rtags nil :noerror)
   ;; make sure you have company-mode installed
   (define-key c-mode-base-map (kbd "M-.")
     (function rtags-find-symbol))
   (define-key c-mode-base-map (kbd "M-,")
     (function rtags-find-references-at-point))
-  (define-key c-mode-base-map (kbd "C->")
+  (define-key c-mode-base-map (kbd "M-'")
     (function rtags-location-stack-back))
   ;; install standard rtags keybindings. Do M-. on the symbol below to
   ;; jump to definition and see the keybindings.
   (rtags-enable-standard-keybindings))
 
 ;; IRC client.
+(defvar erc-log-channels-directory)
 (setq erc-log-channels-directory "~/.erc/logs/")
+(defvar erc-save-buffer-on-part)
 (setq erc-save-buffer-on-part t)
+(defvar erc-hide-timestamps)
 (setq erc-hide-timestamps t)
 
-(defvar ercmode nil "ERC mode")
+(defvar conf-shell nil "No shell mode")
 
+(defvar erc-autojoin-channels-alist)
 (defun erc-fn (switch)
   (message "IRC mode for emacs.")
-  (setq ercmode t)
   (setq erc-autojoin-channels-alist
 	'(("freenode.net" "#maria" "#maria-dev")
 	  ("oftc.net" "#gcc")))
   (erc :server "irc.freenode.net" :port 6667 :nick "kyukhin")
   (erc :server "irc.oftc.net" :port 6667 :nick "kyukhin"))
 
-(defun noshell-fn (switch)
-  (message "Shells won't start")
-  (setq ercmode t))
+(defun shell-fn (switch)
+  (message "Shells will start")
+  (setq conf-shell t))
 
 (add-to-list 'command-switch-alist '("-erc" . erc-fn))
-(add-to-list 'command-switch-alist '("-noshell" . noshell-fn))
+(add-to-list 'command-switch-alist '("-shell" . shell-fn))
 
 ;;(custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -130,9 +143,6 @@
 ;(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 ;(ac-config-default)
 
-;; Magit
-(require 'magit)
-
 ;; mo-git-blame
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
 (autoload 'mo-git-blame-current "mo-git-blame" nil t)
@@ -153,6 +163,7 @@
 
 ;; If file path contains sqlite - use sqlite specific indentation
 ;; use Linux style otherwise
+(defvar blank-style)
 (defun maybe-sqlite-style ()
 ;  (if (and buffer-file-name
 ;	   (string-match "sql" buffer-file-name))
@@ -173,6 +184,7 @@
 (add-hook 'c-mode-hook 'maybe-sqlite-style)
 (add-hook 'c++-mode-hook 'maybe-sqlite-style)
 
+(defvar lua-indent-level)
 (setq lua-indent-level 4)
 (add-hook 'lua-mode-hook 'tabs-off)
 
@@ -240,19 +252,18 @@
   (aset buffer-display-table ?\^M []))
 (put 'upcase-region 'disabled nil)
 
-(defun kyukhin-print-to-pdf ()
-  (interactive)
-  (ps-spool-buffer)
-  (switch-to-buffer "*PostScript*")
-  (write-file "/tmp/tmp.ps")
-  (kill-buffer "tmp.ps")
-  (setq cmd (concat "ps2pdf14 /tmp/tmp.ps " (buffer-name) ".pdf"))
-  (shell-command cmd)
-  (shell-command "rm /tmp/tmp.ps")
-  (message (concat "Saved to:  " (buffer-name) ".pdf"))
-  )
-
-(setq ps-print-header           nil)
+;; (defun kyukhin-print-to-pdf ()
+;;   (interactive)
+;;   (ps-spool-buffer)
+;;   (switch-to-buffer "*PostScript*")
+;;   (write-file "/tmp/tmp.ps")
+;;   (kill-buffer "tmp.ps")
+;;   (setq cmd (concat "ps2pdf14 /tmp/tmp.ps " (buffer-name) ".pdf"))
+;;   (shell-command cmd)
+;;   (shell-command "rm /tmp/tmp.ps")
+;;   (message (concat "Saved to:  " (buffer-name) ".pdf"))
+;;   )
+;; (setq ps-print-header           nil)
 
 (eval-after-load 'diff-mode
   '(progn
@@ -293,6 +304,9 @@
 ;; (defvaralias 'cperl-indent-level 'tab-width)
 
 (add-hook 'perl-mode-hook 'n-cperl-mode-hook t)
+(defvar cperl-indent-level)
+(defvar cperl-continued-statement-offset)
+(defvar cperl-extra-newline-before-brace)
 (defun n-cperl-mode-hook ()
   (setq cperl-indent-level 4)
   (setq indent-tabs-mode nil)
@@ -303,6 +317,7 @@
 ;; Hunspell
 
 ;; список используемых нами словарей
+(defvar ispell-local-dictionary-alist)
 (setq ispell-local-dictionary-alist
       '(("russian"
 	 "[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюя]"
@@ -313,14 +328,19 @@
 	 "[']"  nil ("-d" "en_US") nil iso-8859-1)))
 
 ;; вместо aspell использовать hunspell
+(defvar ispell-really-aspell)
+(defvar ispell-really-hunspell)
 (setq ispell-really-aspell nil
       ispell-really-hunspell t)
 
 ;; полный путь к нашему пропатченному hunspell
+(defvar ispell-program-name)
+(defvar ispell-dictionary)
 (setq ispell-program-name "/usr/bin/hunspell"
       ispell-dictionary "russian")
 
 ;; Команды емаксу в русской раскладке.
+(defvar quail-keyboard-layout)
 (defun reverse-input-method (input-method)
   "Build the reverse mapping of single letters from INPUT-METHOD."
   (interactive
@@ -347,7 +367,7 @@
 (reverse-input-method "russian-computer")
 
 (defun start-shells-fn ()
-  (if (not ercmode)
+  (if conf-shell
       (progn
 	(split-window-vertically)
 	(select-window (next-window (selected-window)))

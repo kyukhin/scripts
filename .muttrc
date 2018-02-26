@@ -29,12 +29,14 @@ set message_cachedir=~/.mutt/cache/bodies
 set certificate_file=~/.mutt/certificates
 
 # Sidebar
+set mail_check_stats=yes
 # change width accordingly
-set sidebar_width=20
+set sidebar_width=30
+# set sidebar_format='%B%* %n'
 # Visible at first, then change its value to yes
 set sidebar_visible=yes
-set sidebar_delim='|'
-set sidebar_sort=yes
+# set sidebar_delim='|'
+# set sidebar_sort=yes
 
 # <CONTROL>-x
 macro index,pager \CB <sidebar-prev><sidebar-open>
