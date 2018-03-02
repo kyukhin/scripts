@@ -35,7 +35,7 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-TERM=xterm-256color
+TERM=screen-256color
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 #case "$TERM" in
@@ -114,7 +114,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH=/home/kyukhin/bin:/home/kyukhin/bin/bin:$PATH
+export PATH=$HOME/bin:$HOME/bin/bin:$PATH
 
 alias emacs='emacs -nw'
 alias grepgo='grep -R --include=*.go'
@@ -125,3 +125,5 @@ if [ -f /usr/bin/time ]; then
 fi
 
 export SVN_EDITOR="emacs -nw -noshell"
+
+export PS1="\w$ "
