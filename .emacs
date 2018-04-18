@@ -73,10 +73,10 @@
 (when (require 'rtags nil :noerror)
   ;; make sure you have company-mode installed
   (define-key c-mode-base-map (kbd "M-.")
-    (function rtags-find-symbol))
+    (function rtags-find-symbol-at-point))
   (define-key c-mode-base-map (kbd "M-,")
     (function rtags-find-references-at-point))
-  (define-key c-mode-base-map (kbd "M-'")
+  (define-key c-mode-base-map (kbd "M-u")
     (function rtags-location-stack-back))
   ;; install standard rtags keybindings. Do M-. on the symbol below to
   ;; jump to definition and see the keybindings.
@@ -219,7 +219,8 @@
 (global-set-key [f3]  'whitespace-mode)
 (global-set-key [f4]  'view-tag-other-window)
 (global-set-key [f5]  'goto-line)
-(global-set-key [f6]  'ispell-region)
+(global-set-key [f6]  'compile)
+; (global-set-key [f6]  'ispell-region)
 (global-set-key [f7]  'ispell-buffer)
 (global-set-key [f8]  'delete-trailing-whitespace)
 (global-set-key [f9]  'comment-region)
@@ -372,7 +373,7 @@
 	(select-window (next-window (selected-window)))
 	(shell "*shell*")
 	;; Don't ask about active buffers upon exit.
-	(set-process-query-on-exit-flag (get-process "shell") nil)
+	; (set-process-query-on-exit-flag (get-process "shell") nil)
 	(rename-buffer "aux2")
 	(shell "*shell*")
 	(set-process-query-on-exit-flag (get-process "shell<1>") nil)

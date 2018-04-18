@@ -1,4 +1,4 @@
-Host sourceware.org sources.redhat.com gcc.gnu.org master.kernel.org svn.eglibc.org kyukhin.noip.me kyukhin.noip.me:2222 192.168.0.1
+Host sourceware.org sources.redhat.com gcc.gnu.org master.kernel.org svn.eglibc.org kyukhin.noip.me kyukhin.noip.me:2222 192.168.0.1 sh6.i.tarantool.org
   IdentityFile ~/.ssh/gnu
 
 Host github.com
