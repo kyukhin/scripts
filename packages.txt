@@ -3,3 +3,5 @@ cppcheck
 fetchmail
 procmail
 lynx
+catdoc
+poppler-utils
