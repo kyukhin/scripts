@@ -2,3 +2,4 @@ msword
 cppcheck
 fetchmail
 procmail
+lynx
