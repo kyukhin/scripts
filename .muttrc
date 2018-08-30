@@ -8,25 +8,21 @@ set sleep_time = 0
 
 # Allow Mutt to open new imap connection automatically.
 unset imap_passive
-
 # Set keep alive. Might help not to disconnect to frequently.
 set imap_keepalive=300
 
 # And poll the current mailbox more often (not needed with IDLE in post 1.5.11)
 set timeout=15
-
 # How often to check for new mail (time in seconds).
 set mail_check = 5
-
-# Store message headers locally to speed things up.
-set header_cache=~/.cache/mutt/headers
 
 # Store messages locally to speed things up, like searching message bodies.
 # Can be the same folder as header_cache.
 # This will cost important disk usage according to your e-mail amount.
 set message_cachedir=~/.cache/mutt/bodies
-
 set certificate_file=~/.cache/mutt/certificates
+# Store message headers locally to speed things up.
+set header_cache=~/.cache/mutt/headers
 
 # Sidebar
 set mail_check_stats=yes
@@ -37,15 +33,6 @@ set sidebar_width=30
 set sidebar_visible=yes
 # set sidebar_delim='|'
 # set sidebar_sort=yes
-
-# <CONTROL>-x
-macro index,pager \CB <sidebar-prev><sidebar-open>
-macro index,pager \CN <sidebar-next><sidebar-open>
-macro index,pager \CK <sidebar-prev-new>
-macro index,pager \CL <sidebar-next-new>
-bind  index,pager \CO sidebar-open
-
-macro index,pager b '<enter-command>toggle sidebar_visible<enter>'
 # endof: Sidebar
 
 # Pager View Options
@@ -62,12 +49,25 @@ alternative_order text/plain text/enriched text/html
 # <ESC>-m: Mark all messages in mailbox as read
 macro index <esc>m "T~N<enter>;WNT~O<enter>;WO\CT~T<enter>" "Mark all messages as read"
 
+# <CONTROL>-x
+macro index,pager \CB <sidebar-prev><sidebar-open>
+macro index,pager \CN <sidebar-next><sidebar-open>
+macro index,pager \CK <sidebar-prev-new>
+macro index,pager \CL <sidebar-next-new>
+bind  index,pager \CO sidebar-open
+
+macro index,pager b '<enter-command>toggle sidebar_visible<enter>'
 bind pager k  previous-line
 bind pager j  next-line
 bind pager gg top
 bind pager G  bottom
-
 bind pager g  group-reply
+bind pager <up> previous-line
+bind pager <down> next-line
+bind pager [ previous-unread
+bind pager ] next-unread
+bind index - collapse-thread
+bind index _ collapse-all
 
 # View attachments properly.
 bind attach <return> view-mailcap
@@ -105,12 +105,6 @@ source `[ -z $TARANTOOL ] && echo '~/.mutt/gcc.kyukhin' || echo '~/.mutt/taranto
 
 # Do not exit on `q'
 set quit=ask-no
-
-bind pager <up> previous-line
-bind pager <down> next-line
-bind pager [ previous-unread
-bind pager ] next-unread
-
 set pager_stop=yes
 
 set charset         = "utf-8"
