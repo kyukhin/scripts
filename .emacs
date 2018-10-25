@@ -38,6 +38,7 @@
 			  'mo-git-blame
 			  'solarized-theme
 ;;			  'blank-mode
+			  'whitespace
 			  'magit
 			  'irony
 			  'company
@@ -48,6 +49,8 @@
 ;(blank-mode 1)
 ;(blank-display-char-off)
 
+(defvar flycheck-checker-error-threshold)
+(setq flycheck-checker-error-threshold 100000)
 (require 'magit)
 
 ; Irony backend for company and flycheck
@@ -58,7 +61,7 @@
 (eval-after-load 'company
   '(add-to-list 'company-backends 'company-irony))
 
-(add-hook 'after-init-hook 'global-company-mode)
+;(add-hook 'after-init-hook 'global-company-mode)
 
 ; Flycheck: on fly syntax checking
 (eval-after-load 'flycheck
@@ -108,20 +111,6 @@
 (add-to-list 'command-switch-alist '("-erc" . erc-fn))
 (add-to-list 'command-switch-alist '("-shell" . shell-fn))
 
-;;(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-;; '(ecb-directories-buffer-namejit-lock-stealth-time 1 t)
-;; '(ecb-directories-show-node-info (quote (if-too-long . name)))
-;; '(ecb-layout-name "left5")
-;; '(ecb-options-version "2.32")
-;; '(ecb-show-sources-in-directories-buffer (quote never))
-;; '(ecb-truncate-long-names nil)
-;; '(ecb-windows-width 0.2)
-;; '(inhibit-startup-screen t))
-
 (require 'buffer-move)
 
 (load-theme 'solarized-light t)
@@ -162,15 +151,17 @@
 
 ;; If file path contains sqlite - use sqlite specific indentation
 ;; use Linux style otherwise
-(defvar blank-style)
+;(defvar blank-style)
 (defun maybe-sqlite-style ()
 ;  (if (and buffer-file-name
 ;	   (string-match "sql" buffer-file-name))
 ;      (progn (setq indent-tabs-mode nil)
 ;	     (c-basic-offset 2))
   (c-set-style "Linux")
-  (setq blank-style "color")
-  (blank-mode)
+;  (setq blank-style "color")
+;  (blank-mode)
+;  (whitespace-mode)
+  (company-mode)
   (irony-cdb-json-select-most-recent)
   (irony-mode))
 ;)
@@ -221,7 +212,7 @@
 (global-set-key [f5]  'goto-line)
 (global-set-key [f6]  'compile)
 ; (global-set-key [f6]  'ispell-region)
-(global-set-key [f7]  'ispell-buffer)
+; (global-set-key [f7]  'ispell-buffer)
 (global-set-key [f8]  'delete-trailing-whitespace)
 (global-set-key [f9]  'comment-region)
 (global-set-key [f10] 'uncomment-region)
@@ -413,3 +404,5 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(provide '.emacs)
+;;; .emacs ends here
