@@ -365,10 +365,10 @@
 	(shell "*shell*")
 	;; Don't ask about active buffers upon exit.
 	; (set-process-query-on-exit-flag (get-process "shell") nil)
-	(rename-buffer "aux2")
+	(rename-buffer "bld")
 	(shell "*shell*")
 	(set-process-query-on-exit-flag (get-process "shell<1>") nil)
-	(rename-buffer "aux")	
+	(rename-buffer "aux")
 	;;(switch-to-buffer-other-window "aux")
 	(add-hook 'comint-exec-hook
 		  (lambda () (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)))
