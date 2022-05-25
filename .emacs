@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; A custom flag set
 
+(setq-default display-fill-column-indicator-column 80)
+(global-display-fill-column-indicator-mode 1)
+
 ;;; Code:
 
 ;; Activate installed packages
@@ -391,10 +394,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   (quote
-    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default)))
+   '("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default))
  '(grep-command "grep --color -nH -r -e ")
- '(package-selected-packages (quote (magit solarized-theme mo-git-blame buffer-move))))
+ '(package-selected-packages '(lua-mode magit solarized-theme mo-git-blame buffer-move)))
 
 (setq split-height-threshold 1200)
 (setq split-width-threshold 2000)
