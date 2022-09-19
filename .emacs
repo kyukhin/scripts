@@ -1,11 +1,9 @@
-;;; config --- kyukhin's Emacs config
+;; config --- kyukhin's Emacs config
 ;;; Commentary:
 ;;; A custom flag set
 
 (setq-default display-fill-column-indicator-column 80)
 (global-display-fill-column-indicator-mode 1)
-
-;;; Code:
 
 ;; Activate installed packages
 (require 'package)
@@ -40,7 +38,6 @@
 (ensure-package-installed 'buffer-move
 			  'mo-git-blame
 			  'solarized-theme
-;;			  'blank-mode
 			  'whitespace
 			  'magit
 			  'irony
@@ -48,29 +45,55 @@
 			  'company-irony
 			  'flycheck
 			  'flycheck-irony
-			  'rtags)
-;(blank-mode 1)
-;(blank-display-char-off)
+			  )
 
-(defvar flycheck-checker-error-threshold)
-(setq flycheck-checker-error-threshold 100000)
-(require 'magit)
+;; Enable speller
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
-; Irony backend for company and flycheck
-; TODO: search DB in current path
+;; Auto complete
+(add-hook 'c++-mode-hook 'company-mode)
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'company-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'company-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
 
+;; Start rdm server if it isn't
+(add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+(add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
+(add-hook 'objc-mode-hook 'rtags-start-process-unless-running)
+
+(defun my-cdb-load ()
+  (irony-cdb-json-add-compile-commands-path "/export/kyukhin/tarantool/src" "/export/kyukhin/tarantool/bld/compile_commands.json")
+  )
+
+(my-cdb-load)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+(require 'rtags)
+(rtags-enable-standard-keybindings)
+					;
 ; Company mode: autocompletion
 (defvar company-backends)
 (eval-after-load 'company
   '(add-to-list 'company-backends 'company-irony))
 
-;(add-hook 'after-init-hook 'global-company-mode)
+;; Show function in status
+(which-function-mode 1)
 
-; Flycheck: on fly syntax checking
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+;; Indent
+;(defvar blank-style)
+(defun maybe-sqlite-style ()
+  (c-set-style "Linux")
+  (company-mode)
+  (irony-cdb-json-select-most-recent)
+  (irony-mode))
+;)
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(add-hook 'c-mode-hook 'maybe-sqlite-style)
+(add-hook 'c++-mode-hook 'maybe-sqlite-style)
+
 
 (display-time-mode 1)
 
@@ -121,29 +144,9 @@
 (add-to-list 'auto-mode-alist '("/mutt" . mail-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . lisp-mode))
 
-;;(add-hook 'before-save-hook 'delete-trailing-whitespace)
-;;(global-set-key [(control m)] 'reindent-then-newline-and-indent)
-
-;; my elisp directories
-;; (defvar elisp-path '("/usr/local/share/emacs/site-lisp"))
-;; (mapcar '(lambda(p) (add-to-list 'load-path p)) elisp-path)
-
-;; Auto-complete
-;(add-to-list 'load-path "~/.emacs.d/")
-;(require 'auto-complete-config)
-;(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
-;(ac-config-default)
-
 ;; mo-git-blame
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
 (autoload 'mo-git-blame-current "mo-git-blame" nil t)
-
-;;(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
-;; '(default ((t (:stipple nil :background "#000000" :foreground "#00ff00" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 250 :width normal :family "misc-fixed")))))
 
 (fset  'yes-or-no-p 'y-or-n-p)
 
@@ -151,31 +154,6 @@
 
 (defun tabs-on  () (setq indent-tabs-mode t))
 (defun tabs-off () (setq indent-tabs-mode nil))
-
-;; If file path contains sqlite - use sqlite specific indentation
-;; use Linux style otherwise
-;(defvar blank-style)
-(defun maybe-sqlite-style ()
-;  (if (and buffer-file-name
-;	   (string-match "sql" buffer-file-name))
-;      (progn (setq indent-tabs-mode nil)
-;	     (c-basic-offset 2))
-  (c-set-style "Linux")
-;  (setq blank-style "color")
-;  (blank-mode)
-;  (whitespace-mode)
-  (company-mode)
-  (irony-cdb-json-select-most-recent)
-  (irony-mode))
-;)
-
-;; (setq-default c-indent-level      8)
-;; (setq-default c-basic-offset      8)
-;; (setq-default tab-width		  8)
-;; (add-hook 'c-mode-hook 'tabs-on)
-;; Above lines replaced with Linux style
-(add-hook 'c-mode-hook 'maybe-sqlite-style)
-(add-hook 'c++-mode-hook 'maybe-sqlite-style)
 
 (defvar lua-indent-level)
 (setq lua-indent-level 4)
@@ -246,45 +224,11 @@
   (aset buffer-display-table ?\^M []))
 (put 'upcase-region 'disabled nil)
 
-;; (defun kyukhin-print-to-pdf ()
-;;   (interactive)
-;;   (ps-spool-buffer)
-;;   (switch-to-buffer "*PostScript*")
-;;   (write-file "/tmp/tmp.ps")
-;;   (kill-buffer "tmp.ps")
-;;   (setq cmd (concat "ps2pdf14 /tmp/tmp.ps " (buffer-name) ".pdf"))
-;;   (shell-command cmd)
-;;   (shell-command "rm /tmp/tmp.ps")
-;;   (message (concat "Saved to:  " (buffer-name) ".pdf"))
-;;   )
-;; (setq ps-print-header           nil)
-
 (eval-after-load 'diff-mode
   '(progn
      (set-face-foreground 'diff-added "green4")
      (set-face-foreground 'diff-removed "red3")))
 
-
-;; Mail
-;;(add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
-;;                                  (nnimap-address "imap.gmail.com")
-;;                                  (nnimap-server-port 993)
-;;                                  (nnimap-stream ssl)))
-;(setq gnus-select-method '(nnimap "gmail"
-;				  (nnimap-address "localhost")
-;				  (nnimap-server-port 1984)
-;				  (nnimap-stream ssl)))
-
-
-;; (setq message-send-mail-function 'smtpmail-send-it
-;;       smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-;;       smtpmail-auth-credentials '(("smtp.gmail.com" 587 "kirill.yukhin@gmail.com" nil))
-;;       smtpmail-default-smtp-server "smtp.gmail.com"
-;;       smtpmail-smtp-server "smtp.gmail.com"
-;;       smtpmail-smtp-service 587
-;;       smtpmail-local-domain "ims.intel.com")
-
-;; (setq gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
 
 ;; Usage: emacs -diff file1 file2
 (defun command-line-diff (switch)
@@ -293,9 +237,6 @@
     (ediff file1 file2)))
 
 (add-to-list 'command-switch-alist '("diff" . command-line-diff))
-
-;; (defalias 'perl-mode 'cperl-mode)
-;; (defvaralias 'cperl-indent-level 'tab-width)
 
 (add-hook 'perl-mode-hook 'n-cperl-mode-hook t)
 (defvar cperl-indent-level)
@@ -307,31 +248,6 @@
   (setq cperl-continued-statement-offset 0)
   (setq cperl-extra-newline-before-brace t)
 )
-
-;; Hunspell
-
-;; список используемых нами словарей
-(defvar ispell-local-dictionary-alist)
-(setq ispell-local-dictionary-alist
-      '(("russian"
-	 "[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюя]"
-	 "[^АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюя]"
-	 "[-]"  nil ("-d" "ru_RU") nil utf-8)
-	("english"
-	 "[A-Za-z]" "[^A-Za-z]"
-	 "[']"  nil ("-d" "en_US") nil iso-8859-1)))
-
-;; вместо aspell использовать hunspell
-(defvar ispell-really-aspell)
-(defvar ispell-really-hunspell)
-(setq ispell-really-aspell nil
-      ispell-really-hunspell t)
-
-;; полный путь к нашему пропатченному hunspell
-(defvar ispell-program-name)
-(defvar ispell-dictionary)
-(setq ispell-program-name "/usr/bin/hunspell"
-      ispell-dictionary "russian")
 
 ;; Команды емаксу в русской раскладке.
 (defvar quail-keyboard-layout)
@@ -361,13 +277,14 @@
 (reverse-input-method "russian-computer")
 
 (defun start-shells-fn ()
+  "Starts shells if launched with -shell option."
   (if conf-shell
       (progn
 	(split-window-vertically)
 	(select-window (next-window (selected-window)))
 	(shell "*shell*")
 	;; Don't ask about active buffers upon exit.
-	; (set-process-query-on-exit-flag (get-process "shell") nil)
+	(set-process-query-on-exit-flag (get-process "shell") nil)
 	(rename-buffer "bld")
 	(shell "*shell*")
 	(set-process-query-on-exit-flag (get-process "shell<1>") nil)
@@ -379,14 +296,7 @@
     )
 )
 
-;(if ( not (boundp 'ercmode))
-;    (funcall 'start-shells-fn))
-
 (add-hook 'emacs-startup-hook 'start-shells-fn)
-
-;;(require 'auto-answer)
-;;(let ((auto-answer '(("\\`Active processes exist; kill them and exit anyway\\? \\'" t))))
-;;  (save-buffers-kill-emacs))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -396,7 +306,8 @@
  '(custom-safe-themes
    '("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default))
  '(grep-command "grep --color -nH -r -e ")
- '(package-selected-packages '(lua-mode magit solarized-theme mo-git-blame buffer-move)))
+ '(package-selected-packages
+   '(flycheck-clang-tidy flycheck-clangcheck rtags lua-mode magit solarized-theme mo-git-blame buffer-move)))
 
 (setq split-height-threshold 1200)
 (setq split-width-threshold 2000)
@@ -408,3 +319,30 @@
  )
 (provide '.emacs)
 ;;; .emacs ends here
+
+;; Flycheck
+(require 'flycheck-clangcheck)
+(require 'flycheck-clang-tidy)
+
+;; To enable all checks:
+;; rm .emacs.d/elpa/flycheck-clang-tidy*/flycheck-clang-tidy.elc
+;; Find "flycheck-define-checker c/c++-clang-tidy" in
+;; .emacs.d/elpa/flycheck-clang-tidy*/flycheck-clang-tidy.el
+;; Add "--checks=*" berfore "source)"
+(setq flycheck-clang-tidy-extra-options "-extra-arg=-Wno-unknown-warning-option")
+
+(defun my-select-clangcheck-for-checker ()
+  "Select clang-check for flycheck's checker."
+  (flycheck-select-checker 'c/c++-clang-tidy))
+
+(add-hook 'c-mode-hook #'my-select-clangcheck-for-checker)
+(add-hook 'c++-mode-hook #'my-select-clangcheck-for-checker)
+
+;; enable static analysis
+(setq flycheck-clangcheck-dbname "/export/tarantool/bld/compile_commands.json")
+(setq flycheck-clangcheck-analyze t)
+
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
