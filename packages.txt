@@ -5,3 +5,5 @@ procmail
 lynx
 catdoc
 poppler-utils
+tmux
+tmux-mem-cpu-load

@@ -307,7 +307,7 @@
    '("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" default))
  '(grep-command "grep --color -nH -r -e ")
  '(package-selected-packages
-   '(flycheck-clang-tidy flycheck-clangcheck rtags lua-mode magit solarized-theme mo-git-blame buffer-move)))
+   '(flycheck-clang-analyzer flycheck-clang-tidy flycheck-clangcheck rtags lua-mode magit solarized-theme mo-git-blame buffer-move)))
 
 (setq split-height-threshold 1200)
 (setq split-width-threshold 2000)
@@ -323,7 +323,14 @@
 ;; Flycheck
 (require 'flycheck-clangcheck)
 (require 'flycheck-clang-tidy)
+(require 'flycheck-clang-analyzer)
 
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; Flycheck -- clang-tidy
 ;; To enable all checks:
 ;; rm .emacs.d/elpa/flycheck-clang-tidy*/flycheck-clang-tidy.elc
 ;; Find "flycheck-define-checker c/c++-clang-tidy" in
@@ -331,18 +338,17 @@
 ;; Add "--checks=*" berfore "source)"
 (setq flycheck-clang-tidy-extra-options "-extra-arg=-Wno-unknown-warning-option")
 
-(defun my-select-clangcheck-for-checker ()
-  "Select clang-check for flycheck's checker."
+(defun my-select-clang-tidy-for-checker ()
+  "Select clang-tidy for flycheck's checker."
   (flycheck-select-checker 'c/c++-clang-tidy))
 
-(add-hook 'c-mode-hook #'my-select-clangcheck-for-checker)
-(add-hook 'c++-mode-hook #'my-select-clangcheck-for-checker)
+(add-hook 'c-mode-hook   #'my-select-clang-tidy-for-checker)
+(add-hook 'c++-mode-hook #'my-select-clang-tidy-for-checker)
 
-;; enable static analysis
+;; Flycheck -- clangcheck>
 (setq flycheck-clangcheck-dbname "/export/tarantool/bld/compile_commands.json")
 (setq flycheck-clangcheck-analyze t)
 
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+;; Flycheck -- clang-analyzer
+(flycheck-clang-analyzer-setup)
 
-(add-hook 'after-init-hook #'global-flycheck-mode)
