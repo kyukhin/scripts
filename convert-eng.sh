@@ -2,8 +2,8 @@
 
 # Let's make some parsing
 # Option strings
-SHORT=hta:s:o:iq:f:yg
-LONG=help,test,astream:,substream:,output:,info,quality:,file:,yes,guess
+SHORT=hta:s:o:iq:f:yge:
+LONG=help,test,astream:,substream:,output:,info,quality:,file:,yes,guess,ext-subs:
 
 # Read the options
 OPTS=$(getopt --options $SHORT --longoptions $LONG --name "$0" -- "$@")
@@ -22,6 +22,7 @@ FILE=
 EXEC=true
 OVERRIDE=-n
 GUESS=false
+EXTSUBS=
 
 # extract options and their arguments into variables.
 while true ; do
@@ -33,6 +34,10 @@ while true ; do
     -a | --astream )
 	ASTREAM=$2
 	shift 2
+	;;
+    -e | ext-subs )
+	EXTSUBS=$2
+	shift 2;
 	;;
     -f | --file )
 	FILE=$2
@@ -93,6 +98,7 @@ echo "FILE=$FILE"
 echo "EXEC=$EXEC"
 echo "OVERRIDE=$OVERRIDE"
 echo "GUESS=$GUESS"
+echo "EXTSUBS=$EXTSUBS"
 
 # Subtitles in separate file (so called filter): -vf subtitles="${i%.}.srt"
 # ... in the same file:                          -vf subtitles="$i"
@@ -117,11 +123,14 @@ echo "GUESS=$GUESS"
 # - Now, replace file extention (for subtitles or for output):
 #   for i in **/*.mkv ; do echo "$i" "${i%.*}.srt" "${i%.*}.mp4" ; done
 #
-# Remove special chars from filename recursively
+# Replace special chars from filename recursively
 #   for i in **/*.mkv ; do mv -v $i $(echo "$i" | tr , _); done
 #   for i in **/*.mkv ; do mv -v $i $(echo "$i" | tr ' _); done
+# ... or remove
+#   for i in **/*     ; do mv -v "$i" $(echo $i | tr -d , ) ; done
 
-for i in ./**/*.mkv; do
+#for i in ./**/*.m4v; do
+for i in ./*.mkv; do
     if [[ ! -z $FILE && $i =~ $FILE ]] ; then
 	echo $i
 	EXEC=true
@@ -129,16 +138,18 @@ for i in ./**/*.mkv; do
 
     if [ "$EXEC" = true ] ; then
 	if [ "$GUESS" = true ] ; then
-	    SSTREAM=`ffprobe -show_entries stream=index,codec_type:stream_tags=language -of json -i "$i" -v panic -select_streams s |jq '[.streams[].tags.language=="eng"]|index(true)'`
+	    if [ -z "$EXTSUBS" ] ; then
+		SSTREAM=`ffprobe -show_entries stream=index,codec_type:stream_tags=language -of json -i "$i" -v panic -select_streams s |jq '[.streams[].tags.language=="eng"]|index(true)'`
 
-	    if [ "$SSTREAM" = "null" ] ; then
-		echo "error: Cannot find subtitles."
-		exit 1
+		if [ "$SSTREAM" = "null" ] ; then
+		    echo "error: Cannot find subtitles."
+		    exit 1
+		fi
+		echo "Detected eng. subs SSTREAM=$SSTREAM"
 	    fi
-	    echo "Detected eng. subs SSTREAM=$SSTREAM"
 
 	    ASTREAM=0:`ffprobe -show_entries stream=index,codec_type:stream_tags=language -of json -i "$i" -v panic -select_streams a |jq '[.streams[] | select(.tags.language=="eng").index][0]'`
-
+	    # TODO: try to guess external subs
 	    if [ "$ASTREAM" = "0:null" ] ; then
 		echo "error: Cannot find audio track."
 		exit 1
@@ -149,13 +160,20 @@ for i in ./**/*.mkv; do
 	if [ "$INFO" = true ] ; then
 	    ffprobe -i "$i"
 	else
-	    f=$(basename -- "$i")
 	    set -x
+	    f=$(basename -- "$i")
+	    d=$(dirname -- "$i")
+	    if [ -z "$EXTSUBS" ] ; then
+		SUBS="$i:si=$SSTREAM"
+	    else
+		SUBS="$d/$EXTSUBS/${f%.*}.srt"
+	    fi
 	    if [ "$TWO_PASS" = true ] ; then
 		ffmpeg $OVERRIDE -i "$i" -c:v libx264 -b:v $VBITRATE -maxrate $VBITRATE -map 0:0 -pass 1 -an -f null /dev/null
-		ffmpeg $OVERRIDE -i "$i" -c:v libx264 -b:v $VBITRATE -maxrate $VBITRATE -map 0:0 -pass 2 -vf subtitles="$i:si=$SSTREAM" -acodec copy -map $ASTREAM "$OUTPUT/${f%.*}.mp4"
+		ffmpeg $OVERRIDE -i "$i" -c:v libx264 -b:v $VBITRATE -maxrate $VBITRATE -map 0:0 -pass 2 -vf subtitles="$SUBS" -acodec copy -map $ASTREAM "$OUTPUT/${f%.*}.mp4"
 	    else
-		ffmpeg $OVERRIDE -i "$i" -c:v libx264 -preset slower -crf 17 -map 0:0 -vf subtitles="$i:si=$SSTREAM" -acodec copy -map $ASTREAM "$OUTPUT/${f%.*}.mp4"
+		ffmpeg $OVERRIDE -i "$i" -c:v libx264 -preset slower -crf 17 -map 0:0 -vf subtitles="$SUBS" -acodec copy -map $ASTREAM "$OUTPUT/${f%.*}.mp4"
+#		ffmpeg $OVERRIDE -i "$i" -c:v libx264 -preset slower -crf 17 -map 0:1 -vf subtitles="$SUBS" -acodec copy -map $ASTREAM "$OUTPUT/${f%.*}.mp4"
 	    fi
 	    set +x
 	fi
