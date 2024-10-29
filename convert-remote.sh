@@ -49,11 +49,12 @@ for f in "${L[@]}"; do
 	exit 1
     fi
 
-    OUT=${f}
-    if [ -f "${OUT}" ] ; then
-	OUT=`dirname "$(realpath ${OUT})"`
+    OUT="${f}"
+    if [ -f "${OUT}" ]; then
+	OUT=`dirname "$(realpath -- "${OUT}")"`
     fi
 
+    echo "Will be syncing back to ${OUT}"
     echo "rsync -e \"ssh -i ${VM_KEY}\" --progress -av ${VM_USER}@${VM_HOST}:${VM_DIR_OUT} \"${OUT}\""
     rsync -e "ssh -i ${VM_KEY}" --progress -av ${VM_USER}@${VM_HOST}:${VM_DIR_OUT} "${OUT}"
     if [ $? -ne 0 ]; then
