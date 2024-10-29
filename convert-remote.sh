@@ -55,8 +55,11 @@ for f in "${L[@]}"; do
     fi
 
     echo "Will be syncing back to ${OUT}"
-    echo "rsync -e \"ssh -i ${VM_KEY}\" --progress -av ${VM_USER}@${VM_HOST}:${VM_DIR_OUT} \"${OUT}\""
-    rsync -e "ssh -i ${VM_KEY}" --progress -av ${VM_USER}@${VM_HOST}:${VM_DIR_OUT} "${OUT}"
+    # --no-* allows not to change ownership and timestamps for the top-level
+    # folder which might not belong to user, who is invoking the script
+    # TODO: should similar relaxation be applied to other invocations of rsync?
+    echo "rsync  -a --no-perms --no-t --no-o --no-g -e \"ssh -i ${VM_KEY}\" --progress -v ${VM_USER}@${VM_HOST}:${VM_DIR_OUT} \"${OUT}\""
+    rsync -a --no-perms --no-t --no-o --no-g -e "ssh -i ${VM_KEY}" --progress -v ${VM_USER}@${VM_HOST}:${VM_DIR_OUT} "${OUT}"
     if [ $? -ne 0 ]; then
 	echo "ERR: syncing from VM. Exit."
 	exit 1
