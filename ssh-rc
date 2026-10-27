@@ -1,0 +1,20 @@
+#!/bin/sh
+# Run by sshd on every login (always with /bin/sh).
+
+# Keep ~/.ssh/ssh_auth_sock pointing at a live forwarded agent, so tmux
+# (setenv SSH_AUTH_SOCK in ~/.tmux.conf) keeps working after reconnects.
+# Repoint only when the current target is gone: short sessions (scp, ssh host cmd)
+# would otherwise leave the link dangling when they exit.
+if [ -n "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/ssh_auth_sock" ] \
+        && [ ! -S "$HOME/.ssh/ssh_auth_sock" ]; then
+    ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/ssh_auth_sock"
+fi
+
+# With ~/.ssh/rc present sshd skips xauth, so do it here (example from sshd(8))
+if read proto cookie && [ -n "$DISPLAY" ]; then
+    if [ "$(echo "$DISPLAY" | cut -c1-10)" = 'localhost:' ]; then
+        echo add "unix:$(echo "$DISPLAY" | cut -c11-)" "$proto" "$cookie"
+    else
+        echo add "$DISPLAY" "$proto" "$cookie"
+    fi | xauth -q -
+fi
