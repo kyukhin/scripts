@@ -31,7 +31,12 @@
 # include ../../common.mk
 
 # Define it to the gcc source tree directory.
-GCC-SOURCE-DIR=/export/users/kyukhin/gcc/git/gcc
+# btsp.sh passes the tree it cloned as GCC_SOURCE
+ifdef GCC_SOURCE
+GCC-SOURCE-DIR=$(GCC_SOURCE)
+else
+GCC-SOURCE-DIR=$(HOME)/gcc/src
+endif
 
 ifndef GCC-SOURCE-DIR
 .DEFAULT:
@@ -102,8 +107,6 @@ FLAGS-TO-PASS+=CXX="$(CXX)"
 
 # Number of procesors on line.  For parallel build.
 NUM-CPUS:=$(shell /usr/bin/getconf _NPROCESSORS_ONLN)
-# Limit NUM-CPUS to 12
-NUM-CPUS:=$(shell if [ $(NUM-CPUS) -ge 12 ]; then echo 12; else echo $(NUM-CPUS);fi)
 PARALLELMFLAGS:=-j $(NUM-CPUS)
 
 ifeq (linux,$(OS))
@@ -113,7 +116,6 @@ endif
 #ENABLE-FLAGS+=--disable-bootstrap
 #ENABLE-FLAGS+=--enable-checking=assert
 
-ENABLE-FLAGS+=--with-demangler-in-ld
 
 # Select languages to build.
 #LANG-FLAGS=--enable-languages=c
@@ -131,7 +133,7 @@ CONFIG-FLAGS+=$(LANG-FLAGS)
 # We can disable bootstrap for debug purpose.
 #CONFIG-FLAGS=--enable-languages=c,c++,fortran,objc --disable-bootstrap
 #CONFIG-FLAGS=--enable-languages=c,c++,fortran --disable-bootstrap
-CONFIG-FLAGS=--enable-languages=c,c++ --disable-bootstrap
+CONFIG-FLAGS+=--enable-languages=c,c++ --disable-multilib
 #CONFIG-FLAGS=--enable-languages=c,c++,fortran
 #CONFIG-FLAGS=--enable-languages=c,c++,java
 #CONFIG-FLAGS=--enable-languages=c,c++
@@ -142,7 +144,6 @@ CONFIG-FLAGS+=$(TARGET-FLAGS)
 #CONFIG-FLAGS+=--prefix=$(GCC-PREFIX)
 #CONFIG-FLAGS+=--with-local-prefix=$(LOCAL-PREFIX)
 #CONFIG-FLAGS+=--enable-gnu-indirect-function
-CONFIG-FLAGS+=--with-as=/export/users/kyukhin/binutils/build/release/bin/as
 
 # msticlxl28
 #CONFIG-FLAGS+=--with-gmp=/usr/local/lib --with-mpfr=/usr/local/lib --with-mpc=/usr/local/lib LDFLAGS="-static -static-libgcc"
@@ -196,10 +197,10 @@ endif
 #FLAGS-TO-PASS+=CXXFLAGS="$(BOOT_CFLAGS)"
 
 # Use SDE emulator to run test.
-BOARD=sde-sim
+#BOARD=sde-sim
 
 # Normal test.
-#BOARD=unix
+BOARD=unix
 
 #GNU-PREFIX=/opt/gnu
 ifdef GNU-PREFIX
@@ -219,7 +220,8 @@ endif
 
 ifeq (ia64,$(ARCH))
 PRCTL=prctl --unaligned=always-signal
-else
+endif
+ifneq (,$(filter i386 x86_64,$(ARCH)))
 CONFIG-FLAGS+=--with-fpmath=sse
 endif
 
@@ -237,18 +239,22 @@ SANITY-RUNTESTFLAGS=vect.exp i386-costmodel-vect.exp \
 		    x86_64-costmodel-vect.exp $(RUNTESTFLAGS)
 SANITY-FLAGS-TO-PASS=check RUNTESTFLAGS="$(SANITY-RUNTESTFLAGS)"
 
-#X86-RUNTESTFLAGS=i386.exp=hle-* $(RUNTESTFLAGS)
+#QUICK-RUNTESTFLAGS=i386.exp=hle-* $(RUNTESTFLAGS)
 
-#X86-RUNTESTFLAGS=i386.exp=avx3_1-vpcmpgtd-1* $(RUNTESTFLAGS)
+#QUICK-RUNTESTFLAGS=i386.exp=avx3_1-vpcmpgtd-1* $(RUNTESTFLAGS)
 
-X86-RUNTESTFLAGS=i386.exp=avx* $(RUNTESTFLAGS)
+QUICK-RUNTESTFLAGS=i386.exp=avx* $(RUNTESTFLAGS)
+ifeq (ppc64le,$(ARCH))
+# `make c` runs a quick subset: AVX tests on x86, target and vectorizer tests on POWER
+QUICK-RUNTESTFLAGS=powerpc.exp vect.exp
+endif
 
-X86-FLAGS-TO-PASS=check RUNTESTFLAGS="$(X86-RUNTESTFLAGS)"
+QUICK-FLAGS-TO-PASS=check RUNTESTFLAGS="$(QUICK-RUNTESTFLAGS)"
 
 # Don't report test results. Use it on internal branches.
 REPORT=true
 
-# Report test results.  Use it on FSF checkout trees.
+# Print the test summary (test_summary | sh would mail it to gcc-testresults)
 REPORT=$(MAKE) report
 
 TIME=/usr/bin/time
@@ -283,16 +289,16 @@ sanity-check:
 
 c:
 	$(TIME) $(MAKE) $(PARALLELMFLAGS) -C $(BUILD-DIR)/gcc -k \
-		$(X86-FLAGS-TO-PASS)
+		$(QUICK-FLAGS-TO-PASS)
 
 x86-check:
 	$(TIME) $(MAKE) $(PARALLELMFLAGS) -C $(BUILD-DIR)/gcc -k \
-		$(X86-FLAGS-TO-PASS)
+		$(QUICK-FLAGS-TO-PASS)
 
 # Report test results.
 report:
 	cd $(BUILD-DIR) && \
-	  $(GCC-SOURCE-DIR)/contrib/test_summary | sh
+	  $(GCC-SOURCE-DIR)/contrib/test_summary
 
 # Configure, build, run test and report test results.
 one:

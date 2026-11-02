@@ -8,16 +8,17 @@ trap 'set -x; trap - SIGTERM SIGINT; kill 0' SIGINT SIGTERM
 HASH=$1
 TITLE=$2
 REPO=$3
+HERE=$(cd "$(dirname "$0")" && pwd)
 
 RH=$HASH~1
 RT=$TITLE-ref
-~/bin/btsp.sh $RH $RT $REPO $PWD &
+$HERE/btsp.sh $RH $RT "$REPO" $PWD &
 Rpid=$!
 RP=$PWD/$Rpid-$RT
 
 EH=$HASH
 ET=$TITLE-exp
-~/bin/btsp.sh $EH $ET $REPO $PWD &
+$HERE/btsp.sh $EH $ET "$REPO" $PWD &
 Epid=$!
 EP=$PWD/$Epid-$ET
 

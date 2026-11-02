@@ -4,8 +4,11 @@
 
 HASH=$1
 TITLE=$2
+# Test target: TEST=check for the full testsuite, `make c` by default
+TEST=${TEST:-c}
+HERE=$(cd "$(dirname "$0")" && pwd)
 
-REPO=/home/kyukhin/gcc/git/gcc
+REPO=$HOME/gcc/src
 if [ -n "$3" ]; then REPO=$3; fi
 
 TPATH=$PWD
@@ -19,7 +22,7 @@ echo "kyukhin ($$-$TITLE): Working dir: $TPATH" |tee -a $STATUS
 mkdir $TPATH || exit -1
 mkdir $TPATH/src || exit -1
 mkdir $TPATH/bld || exit -1
-cp ~/bin/Makefile $TPATH/bld/Makefile ||exit -1
+cp $HERE/Makefile $TPATH/bld/Makefile ||exit -1
 
 pushd $TPATH/src > /dev/null || exit -1
 git clone $REPO gcc >> $STATUS || exit -1
@@ -38,13 +41,13 @@ if [ $S -ne 0 ]
 then
     echo "**** ($$-$TITLE): BOOTSTRAP FAILED. STOP STOP STOP. FAILED ****" |tee -a $STATUS
     popd
-    exit $1
+    exit 1
 fi
 
 echo "kyukhin ($$-$TITLE): Testing..." |tee -a $STATUS
 cd $TPATH/bld || exit -1
 
-GCC_SOURCE=$TPATH/src/gcc time make c >> $STATUS.detail 2>&1
+GCC_SOURCE=$TPATH/src/gcc time make $TEST >> $STATUS.detail 2>&1
 S=$?
 
 echo "kyukhin ($$-$TITLE): STATUS is $S" |tee -a $STATUS
