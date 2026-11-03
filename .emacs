@@ -33,6 +33,12 @@
 
 (display-time-mode 1)
 
+;; Emacs in a terminal (iTerm2, here and over ssh): killed and copied text also goes to the
+;; system clipboard through the terminal (OSC 52). Emacs cannot detect this in iTerm2, so it
+;; is stated; iTerm2 must allow it (Settings, General, Selection, "Applications in terminal
+;; may access clipboard"). Cmd-C is iTerm2's own and copies only its mouse selection
+(setq xterm-extra-capabilities '(setSelection))
+
 ;;; IRC: `emacs -erc` connects over TLS to OFTC and joins #gcc
 (use-package erc
   :defer t
