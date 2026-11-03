@@ -45,7 +45,14 @@
 	erc-save-buffer-on-part t)
   (make-directory erc-log-channels-directory t)
   (add-to-list 'erc-modules 'log)
-  (erc-update-modules))
+  (erc-update-modules)
+  ;; A command typed or pasted after spaces goes out as a plain message, a password with it
+  (defun kyukhin-erc-block-indented-command (input)
+    "Refuse to send INPUT when it is a command with spaces before the slash."
+    (when (string-match-p "\\`[ \t]+/" (erc-input-string input))
+      (setf (erc-input-sendp input) nil)
+      (message "ERC: not sent, a command with spaces before the slash")))
+  (add-hook 'erc-pre-send-functions #'kyukhin-erc-block-indented-command))
 
 (defun kyukhin-erc (_switch)
   "Connect to IRC; `emacs -erc` calls this."
